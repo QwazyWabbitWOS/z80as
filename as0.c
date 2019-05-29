@@ -44,34 +44,34 @@ int main(int argc, char *argv[])
 
 				default:
 					fprintf(stderr, "Bad option %c\n", c);
-					exit(BAD);
+					return EXIT_FAILURE;
 				}
 			}
 		} else if (ifn == NULL)
 			ifn = p;
 		else {
 			fprintf(stderr, "Too many source files\n");
-			exit(BAD);
+			return EXIT_FAILURE;
 		}
 	}
 	if (ifn == NULL) {
 		fprintf(stderr, "No source file\n");
-		exit(BAD);
+		return EXIT_FAILURE;
 	}
 	if ((ifp=fopen(ifn, "r")) == NULL) {
 		fprintf(stderr, "%s: cannot open\n", ifn);
-		exit(BAD);
+		return EXIT_FAILURE;
 	}
 	mkname(fn, ifn, "hex");
 	if ((ofp=fopen(fn, "w")) == NULL) {
 		fprintf(stderr, "%s: cannot create\n", fn);
-		exit(BAD);
+		return EXIT_FAILURE;
 	}
 	if (lflag != 0) {
 		mkname(fn, ifn, "lis");
 		if ((lfp=fopen(fn, "w")) == NULL) {
 			fprintf(stderr, "%s: cannot create\n", fn);
-			exit(BAD);
+			return EXIT_FAILURE;
 		}
 	}
 	syminit();
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	outeof();
-	exit(GOOD);
+	return EXIT_SUCCESS;
 }
 
 /*
