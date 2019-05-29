@@ -131,7 +131,7 @@ void expr2(register ADDR *ap)
 	if (c == '-') {
 		expr1(ap, HIPRI, 0);
 		istuser(ap);
-		ap->a_value = -ap->a_value;
+		ap->a_value = 0 - ap->a_value;
 		return;
 	}
 	if (c == '~') {
