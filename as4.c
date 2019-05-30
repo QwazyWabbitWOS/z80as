@@ -32,7 +32,7 @@ void outab(int b)
 {
 	if (pass != 0) {
 		if (cp < &cb[NCODE])
-			*cp++ = b;
+			*cp++ = (char)b;
 		outbyte(b);
 	}
 	++dot;
@@ -58,7 +58,7 @@ void outeof(void)
  */
 void outbyte(int b)
 {
-	if (hexp>=&hexb[NHEX] || hexpc!=dot) {
+	if (hexp >= &hexb[NHEX] || hexpc != dot) {
 		outflush();
 		hexp = &hexb[0];
 	}
@@ -66,7 +66,7 @@ void outbyte(int b)
 		hexla = dot;
 		hexpc = dot;
 	}
-	*hexp++ = b;
+	*hexp++ = (char)b;
 	++hexpc;
 }
 

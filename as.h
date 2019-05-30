@@ -32,8 +32,8 @@
 #define	GOOD	(SS$_NORMAL)
 #define	BAD	(STS$M_INHIB_MSG|SS$_ABORT)
 #else
-#define	GOOD	0
-#define	BAD	1
+#define	GOOD	EXIT_SUCCESS
+#define	BAD		EXIT_FAILURE
 #endif
 
 /*
@@ -129,7 +129,8 @@ typedef	unsigned int	VALUE;		/* For symbol values */
 /*
  * Address description.
  */
-typedef	struct	ADDR	{
+typedef	struct	ADDR
+{
 	int	a_type;			/* Type */
 	VALUE	a_value;		/* Index offset, etc */
 }	ADDR;
@@ -137,7 +138,8 @@ typedef	struct	ADDR	{
 /*
  * Symbol.
  */
-typedef	struct	SYM	{
+typedef	struct	SYM
+{
 	struct	SYM *s_fp;		/* Link in hash */
 	char	s_id[NCPS];		/* Name */
 	int	s_type;			/* Type */
@@ -166,27 +168,37 @@ extern	SYM	*uhash[];
 extern	int	lflag;
 extern	jmp_buf	env;
 extern	VALUE	dot;
+extern	unsigned int err_count;
 
-extern	SYM	*lookup(char *, SYM *[], int );
-extern	void	mkname(char *, char *, char *);
-extern	void	syminit(void), asmline(void), list(void), outeof(void);
-extern	void	qerr(void), asmld(void);
-extern	int	getnb(void);
-extern	void	getid(char *, register int), comma(void);
-extern	int	ccfetch(ADDR *);
-extern	void	err(char), aerr(void), uerr(char *);
-extern	void	getaddr(register ADDR *);
-extern	void	istuser(ADDR *);
-extern	void	unget(char), outab(int);
-extern	void	outaw(int), outop(register int, register ADDR *);
-extern	char	get(void);
-extern	void	storerror(register int);
-extern	int	symeq(register char *, register char *);
-extern	void	symcopy(register char *, register char *);
-extern	void	expr1(register ADDR *, int, int);
-extern	void	expr2(register ADDR *);
-extern	void	isokaors(register ADDR *, int);
-extern	void	expr3(register ADDR *, int);
-extern	void	outbyte(int), outflush(void), outhex(int);
-extern	void	list1(register char *, register int, int);
-extern	int	symhash(register char *);
+
+extern	SYM *lookup(char *, SYM *[], int );
+extern	void mkname(char *, char *, char *);
+extern	void syminit(void);
+extern	void asmline(void);
+extern	void list(void);
+extern	void outeof(void);
+extern	void asmld(void);
+extern	int  getnb(void);
+extern	void getid(char *, register int), comma(void);
+extern	int  ccfetch(ADDR *);
+extern	void err(char);
+extern	void aerr(void);
+extern	void qerr(void);
+extern	void uerr(char*);
+extern	void getaddr(register ADDR *);
+extern	void istuser(ADDR *);
+extern	void unget(char), outab(int);
+extern	void outaw(int);
+extern	void outop(register int, register ADDR*);
+extern	char get(void);
+extern	void storerror(register int);
+extern	int  symeq(register char *, register char *);
+extern	void symcopy(register char *, register char *);
+extern	void expr1(register ADDR *, int, int);
+extern	void expr2(register ADDR *);
+extern	void isokaors(register ADDR *, int);
+extern	void expr3(register ADDR *, int);
+extern	void outbyte(int), outflush(void), outhex(int);
+extern	void list1(register char *, register int, int);
+extern	int  symhash(register char *);
+ADDR* getldaddr(ADDR* ap, int* modep, int* regp, ADDR* iap);

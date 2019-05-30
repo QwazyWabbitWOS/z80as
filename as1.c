@@ -49,11 +49,12 @@ void asmline(void)
 	register SYM	*sp1;
 	char		id[NCPS];
 	char		id1[NCPS];
-	ADDR		a1;
-	ADDR		a2;
+	ADDR		a1 = { 0 };
+	ADDR		a2 = { 0 };
 
 	laddr = dot;
 	lmode = SLIST;
+	srcreg = 0;
 loop:
 	if ((c=getnb())=='\n' || c==';')
 		return;
@@ -104,7 +105,7 @@ loop:
 		lmode = ALIST;
 		goto loop;
 	}
-	unget(c);
+	unget((char)c);
 	lmode = BLIST;
 	opcode = sp->s_value;
 	switch (sp->s_type&TMMODE) {
@@ -121,7 +122,7 @@ loop:
 			istuser(&a1);
 			outab(a1.a_value);
 		} while ((c=getnb()) == ',');
-		unget(c);
+		unget((char)c);
 		break;
 
 	case TDEFW:
@@ -131,7 +132,7 @@ loop:
 			istuser(&a1);
 			outaw(a1.a_value);
 		} while ((c=getnb()) == ',');
-		unget(c);
+		unget((char)c);
 		break;
 
 	case TDEFM:
@@ -186,7 +187,8 @@ loop:
 		break;
 
 	case TRET:
-		unget(c = getnb());
+		c = getnb();
+		unget((char)c);
 		if (c!='\n' && c!=';') {
 			getaddr(&a1);
 			if ((cc=ccfetch(&a1)) < 0)
@@ -459,14 +461,14 @@ loop:
  */
 void asmld(void)
 {
-	int	mdst;
-	int	rdst;
-	int	msrc;
-	int	rsrc;
+	int	mdst = 0;
+	int	rdst = 0;
+	int	msrc = 0;
+	int	rsrc = 0;
 	ADDR	*indexap;
-	ADDR	dst;
-	ADDR	src;
-	ADDR	*getldaddr();
+	ADDR	dst = { 0 };
+	ADDR	src = { 0 };
+//	ADDR	*getldaddr();
 
 	indexap = NULL;
 	indexap = getldaddr(&dst, &mdst, &rdst, indexap);

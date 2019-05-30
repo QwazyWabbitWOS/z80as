@@ -25,7 +25,7 @@ void getaddr(register ADDR *ap)
 	register int	c;
 
 	if ((c=getnb()) != '(') {
-		unget(c);
+		unget((char)c);
 		expr1(ap, LOPRI, 0);
 		return;
 	}
@@ -106,7 +106,7 @@ void expr1(register ADDR *ap, int lpri, int paren)
 			ap->a_value /= right.a_value;
 		}
 	}
-	unget(c);
+	unget((char)c);
 }
 
 /*
@@ -194,7 +194,7 @@ void expr3(register ADDR *ap, int c)
 	do {
 		if (isupper(c))
 			c = tolower(c);
-		*np1++ = c;
+		*np1++ = (char)c;
 		c = *ip++;
 	} while (isalnum(c));
 	--ip;

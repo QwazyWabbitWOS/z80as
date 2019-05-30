@@ -7,7 +7,7 @@
 
 /*
  * Given a pointer to a
- * sumbol, compute the hash bucket
+ * symbol, compute the hash bucket
  * number. The "add all the characters
  * and take the result modulo the table
  * size" algorithm is used.
@@ -34,10 +34,11 @@ int symhash(register char *id)
 void err(char c)
 {
 	if (pass != 0) {
-		if (lflag != 0)
+		if (lflag != 0) {
 			storerror(c);
-		else
-			printf("%04d %c\n", line, c);
+			printf("Line %04d %c error\n", line, c);
+		}
+		err_count++;
 	}
 	if (c == 'q')
 		longjmp(env, 1);
@@ -53,10 +54,11 @@ void err(char c)
 void uerr(char *id)
 {
 	if (pass != 0) {
-		if (lflag != 0)
+		if (lflag != 0) {
 			storerror('u');
-		else
-			printf("%04d u %.*s\n", line, NCPS, id);
+			printf("Line %04d undefined symbol: %.*s\n", line, NCPS, id);
+		}
+		err_count++;
 	}
 }
 
@@ -91,7 +93,7 @@ void storerror(register int c)
 		if (*p++ == c)
 			return;
 	if (p < &eb[NERR]) {
-		*p++ = c;
+		*p++ = (char)c;
 		ep = p;
 	}
 }
@@ -115,7 +117,7 @@ void getid(char *id, register int c)
 		if (p < &id[NCPS]) {
 			if (isupper(c))
 				c = tolower(c);
-			*p++ = c;
+			*p++ = (char)c;
 		}
 		if ((c = *ip) != '\n')
 			++ip;
@@ -202,7 +204,7 @@ char get(void)
 
 	if ((c = *ip) != '\n')
 		++ip;
-	return (c);
+	return (char)c;
 }
 
 /*

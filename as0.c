@@ -23,6 +23,7 @@ SYM	*uhash[NHASH];
 int	pass;
 int	line;
 jmp_buf	env;
+unsigned int err_count;
 
 int main(int argc, char *argv[])
 {
@@ -31,6 +32,8 @@ int main(int argc, char *argv[])
 	register int	i;
 	register int	c;
 	char		fn[NFNAME];
+
+	printf("Mark Williams Co. Z80 Cross-Assembler Open Source Version 3.0\n");
 
 	ifn = NULL;
 	for (i=1; i<argc; ++i) {
@@ -44,36 +47,41 @@ int main(int argc, char *argv[])
 
 				default:
 					fprintf(stderr, "Bad option %c\n", c);
-					return EXIT_FAILURE;
+					return BAD;
 				}
 			}
 		} else if (ifn == NULL)
 			ifn = p;
 		else {
 			fprintf(stderr, "Too many source files\n");
-			return EXIT_FAILURE;
+			return BAD;
 		}
 	}
 	if (ifn == NULL) {
 		fprintf(stderr, "No source file\n");
-		return EXIT_FAILURE;
+		return BAD;
 	}
 	if ((ifp=fopen(ifn, "r")) == NULL) {
 		fprintf(stderr, "%s: cannot open\n", ifn);
-		return EXIT_FAILURE;
+		return BAD;
 	}
 	mkname(fn, ifn, "hex");
 	if ((ofp=fopen(fn, "w")) == NULL) {
 		fprintf(stderr, "%s: cannot create\n", fn);
-		return EXIT_FAILURE;
+		return BAD;
 	}
 	if (lflag != 0) {
 		mkname(fn, ifn, "lis");
 		if ((lfp=fopen(fn, "w")) == NULL) {
 			fprintf(stderr, "%s: cannot create\n", fn);
-			return EXIT_FAILURE;
+			return BAD;
 		}
 	}
+	err_count = 0;
+	printf("Assembling %s\n", ifn);
+	if (lfp)
+		printf("Listing file is %s\n", fn);
+
 	syminit();
 	for (pass=0; pass<2; ++pass) {
 		line = 0;
@@ -91,7 +99,11 @@ int main(int argc, char *argv[])
 		}
 	}
 	outeof();
-	return EXIT_SUCCESS;
+	printf("%u Error(s)\n", err_count);
+	if (err_count)
+		return BAD;
+	else
+		return GOOD;	// no errors
 }
 
 /*
@@ -119,7 +131,7 @@ void mkname(char *dfn, char *sfn, char *dft)
 #endif
 	p2 = dfn;
 	while ((c = *p1++)!=0 && c!='.')
-		*p2++ = c;
+		*p2++ = (char)c;
 	*p2++ = '.';
 	p1 = dft;
 	while ((*p2++ = *p1++))
